@@ -54,13 +54,17 @@ func VerifyForCodeSigning(certs []*x509.Certificate, failWithoutFullChain bool) 
 		},
 	}
 
-	// ignore "devid_execute" and "devid_kernel" critical extensions
+	// ignore few Apple-specific critical extensions
 	temp := leaf.UnhandledCriticalExtensions[:0]
 	for _, ex := range leaf.UnhandledCriticalExtensions {
 		switch ex.String() {
-		case "1.2.840.113635.100.6.1.13": // devid_execute
+		case "1.2.840.113635.100.6.1.12": // macOS Development
 			continue
-		case "1.2.840.113635.100.6.1.18": // devid_kernel
+		case "1.2.840.113635.100.6.1.13": //Developer ID Application
+			continue
+		case "1.2.840.113635.100.6.1.14": //Developer ID Installer
+			continue
+		case "1.2.840.113635.100.6.1.18": // Developer ID Kernel Extension
 			continue
 		default:
 			temp = append(temp, ex)
